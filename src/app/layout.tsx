@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 
-import Navbar from "@/components/navber";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +30,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {/* Suspense keeps the pathname-aware navbar safe on future dynamic routes. */}
         <Suspense fallback={<div className="h-16" />}>
-          <Navbar />
         </Suspense>
         {children}
       </body>

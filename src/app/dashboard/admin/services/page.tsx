@@ -1,12 +1,12 @@
 import React from 'react';
 
-const Technicalpage = () => {
+const ServicesPage = () => {
     return (
         <div>
-            Technical page
+            admin services page
             
         </div>
     );
 };
 
-export default Technicalpage;
+export default ServicesPage;

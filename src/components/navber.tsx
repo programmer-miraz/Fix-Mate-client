@@ -55,8 +55,8 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-blue-100/80 bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0  z-50 w-full border-b border-blue-100/80 bg-white/85 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70">
+      <div className=" mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
