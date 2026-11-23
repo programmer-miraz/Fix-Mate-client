@@ -155,10 +155,10 @@ export default function AddServiceForm() {
       return;
     }
 
-    const technicianName = session?.user?.name;
+    const technicianId = session?.user?.id;
     const technicianEmail = session?.user?.email;
 
-    if (!technicianName || !technicianEmail) {
+    if (!technicianId || !technicianEmail) {
       setErrorMessage("Your session is not ready. Please refresh the page and try again.");
       return;
     }
@@ -185,7 +185,7 @@ export default function AddServiceForm() {
         estimatedDuration: formValues.estimatedDuration.trim(),
         serviceMode: formValues.serviceMode,
         serviceArea: formValues.serviceArea.trim(),
-        technicianName,
+        technicianId,
         technicianEmail,
         approvalStatus: "pending",
         isAvailable: true,

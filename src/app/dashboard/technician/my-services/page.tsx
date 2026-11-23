@@ -1,9 +1,16 @@
-import React from 'react';
+import { useSession } from "@/lib/auth-client";
+import Services from "./services";
 
 const Myservices_page = () => {
+    const { data: session,isPending } = useSession();
+
+    if (!session) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div>
-               technician MY-services page
+            <Services session={session} />
         </div>
     );
 };
