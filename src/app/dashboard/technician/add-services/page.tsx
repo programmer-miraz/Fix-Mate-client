@@ -1,11 +1,5 @@
-import React from 'react';
+import AddServiceForm from "./add-service-form";
 
-const AddServicess_page = () => {
-    return (
-        <div>
-            technician add services page
-        </div>
-    );
-};
-
-export default AddServicess_page;
+export default function AddServicess_page() {
+  return <AddServiceForm />;
+}
