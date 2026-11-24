@@ -106,7 +106,7 @@ fixmate/
     navber.tsx, accountMenu.tsx, hero.tsx, services-cart.tsx
     home/FeaturedServices.tsx, ServiceCard.tsx, FeaturedServicesSkeleton.tsx, service-types.ts
     auth/auth-layout.tsx, sign-in-form.tsx, sign-up-form.tsx, google-icon.tsx
-    ui/  button, card, input, label, skeleton, separator, sheet, sidebar, tooltip, sonner
+    ui/  button, card, dialog, input, label, skeleton, separator, sheet, sidebar, tooltip, sonner
   src/dashboard-components/  sidebar.tsx, dashboard-navbar.tsx
   src/lib/  auth.ts, auth-client.ts, validation.ts, utils.ts
   src/lib/api/get-services.ts
@@ -132,7 +132,7 @@ fixmate-server/
 - Featured Services: real data from `/services`, approved + available only, newest 6 by `createdAt`, responsive cards, skeleton via Suspense, empty/error states.
 - Dashboard: role-based sidebar (unchanged menu items), minimal navbar with static session profile on the right, sign-out in the sidebar footer.
 - Technician Add Service: validated form, ImgBB upload with preview, `createService()` call, pending/available defaults, inline success/error messages.
-- Technician My Services: session id → `getMyServices(userID)`, responsive table (mobile: stacked rows) with Service / Category / Price / Review / Available / Actions columns, approval badges, working ON/OFF availability toggle via `updateServiceAvailability()` + Sonner toast, UI-only Edit/Delete buttons, loading/empty/error states, total count. `<Toaster />` is mounted in `src/app/layout.tsx`.
+- Technician My Services: session id → `getMyServices(userID)`, responsive table (mobile: stacked rows) with Service / Category / Price / Review / Available / Actions columns, approval badges, working ON/OFF availability toggle via `updateServiceAvailability()` + Sonner toast, Edit dialog (pre-filled, ImgBB upload, `updateService()`), UI-only Delete button, loading/empty states, total count. `<Toaster />` is mounted in `src/app/layout.tsx`.
 
 ## 10. Pending / known gaps
 

@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { AlertCircle, Pencil, Plus, RefreshCw, Trash2, Wrench } from "lucide-react";
+import { Plus, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/lib/auth-client";
@@ -14,9 +13,11 @@ import {
     updateServiceAvailability,
 } from "@/lib/api/get-services";
 import { cn } from "@/lib/utils";
+import ActionButtons from "./edit-delete";
+;
 
 // Fields returned by the existing /my-services/:userId Express route.
-type MyService = {
+export type MyService = {
     _id: string;
     title: string;
     category: string;
@@ -108,38 +109,15 @@ function AvailabilityToggle({
             )}
         >
             <span
-              className={cn(
-    "absolute top-0.5 size-5 rounded-full bg-white shadow-sm transition-transform duration-400 ease-in-out",
-    isAvailable ? "translate-x-[1px]" : "-translate-x-5"
-)}
+                className={cn(
+                    "absolute top-0.5 size-5 rounded-full bg-white shadow-sm transition-transform duration-400 ease-in-out",
+                    isAvailable ? "translate-x-[1px]" : "-translate-x-5"
+                )}
             />
         </button>
     );
 }
 
-// Edit / Delete buttons. UI only, same behaviour as before.
-function ActionButtons() {
-    return (
-        <div className="flex items-center gap-2">
-            <Button
-                type="button"
-                variant="outline"
-                className="h-8 cursor-pointer rounded-lg border-blue-200 bg-blue-50/60 px-3 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
-            >
-                <Pencil className="size-3.5" />
-                Edit
-            </Button>
-            <Button
-                type="button"
-                variant="ghost"
-                className="h-8 cursor-pointer rounded-lg px-3 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-            >
-                <Trash2 className="size-3.5" />
-                Delete
-            </Button>
-        </div>
-    );
-}
 
 const Services = () => {
     const { data: session } = useSession();
@@ -221,30 +199,6 @@ const Services = () => {
                 </div>
             )}
 
-            {/* Error state */}
-            {!isLoading && errorMessage && (
-                <Card className="mx-auto mt-10 max-w-xl rounded-2xl border-blue-100 text-center shadow-lg shadow-blue-900/5">
-                    <CardContent className="flex flex-col items-center px-6 py-12">
-                        <AlertCircle className="size-9 text-red-500" />
-                        <p className="mt-4 text-base font-semibold text-slate-900">
-                            Could not load your services
-                        </p>
-                        <p className="mt-2 text-sm text-slate-500">{errorMessage}</p>
-                        <Button
-                            type="button"
-                            onClick={() => {
-                                setIsLoading(true);
-                                loadServices();
-                            }}
-                            className="mt-5 h-10 cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 text-white shadow-md shadow-blue-500/20 transition hover:from-blue-700 hover:to-cyan-600"
-                        >
-                            <RefreshCw className="size-4" />
-                            Retry
-                        </Button>
-                    </CardContent>
-                </Card>
-            )}
-
             {/* Empty state */}
             {!isLoading && !errorMessage && services.length === 0 && (
                 <Card className="mx-auto mt-10 max-w-xl rounded-2xl border-blue-100 text-center shadow-lg shadow-blue-900/5">
@@ -322,7 +276,10 @@ const Services = () => {
                                         />
                                     </td>
                                     <td className="px-5 py-3">
-                                        <ActionButtons />
+                                        <ActionButtons
+                                            service={service}
+                                            onServiceUpdated={loadServices}
+                                        />
                                     </td>
                                 </tr>
                             ))}
@@ -370,7 +327,10 @@ const Services = () => {
                                 />
                             </div>
                             <div className="border-t border-blue-50 px-4 py-3">
-                                <ActionButtons />
+                                <ActionButtons
+                                    service={service}
+                                    onServiceUpdated={loadServices}
+                                />
                             </div>
                         </Card>
                     ))}

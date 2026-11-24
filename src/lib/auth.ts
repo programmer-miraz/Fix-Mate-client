@@ -10,12 +10,10 @@ const db = client.db("Fix-mate");
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
-    // FixMate only requires 6 characters, plus the rules checked below.
     minPasswordLength: 6,
   },
   user: {
     additionalFields: {
-
       role: {
         type: "string",
         defaultValue: "customer",
@@ -49,6 +47,8 @@ export const auth = betterAuth({
       }
     },
   },
+
+  
   database: mongodbAdapter(db, {
     client,
   }),
