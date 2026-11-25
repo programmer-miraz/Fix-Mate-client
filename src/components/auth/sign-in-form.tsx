@@ -29,85 +29,98 @@ import { getDashboardPath, isValidEmail } from "@/lib/validation";
 type FieldErrors = Record<string, string[]>;
 
 export default function SignInForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { data: session, isPending } = authClient.useSession();
 
-  // Only allow local paths so the "redirect" parameter cannot send users away.
-  const requestedPage =
-    searchParams.get("redirect") ?? searchParams.get("callbackURL");
-  const safeRedirect =
-    requestedPage && requestedPage.startsWith("/") && !requestedPage.startsWith("//")
-      ? requestedPage
-      : null;
+const router = useRouter();
+const searchParams = useSearchParams();
+const { data: session, isPending } = authClient.useSession();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+// Private page থেকে এলে সেই page-এ ফেরত যাবে
+// Normal login হলে role অনুযায়ী dashboard-এ যাবে
+const requestedPage =
+  searchParams.get("redirect") ??
+  searchParams.get("callbackURL") ??
+  searchParams.get("callbackUrl");
 
-  // Logged-in users should not see the sign-in form.
-  useEffect(() => {
-    if (!isPending && session?.user) {
-      const userRole = (session.user as { role?: string }).role;
-      router.replace(safeRedirect ?? getDashboardPath(userRole));
-    }
-  }, [isPending, session, router, safeRedirect]);
+const safeRedirect =
+  requestedPage &&
+  requestedPage.startsWith("/") &&
+  !requestedPage.startsWith("//")
+    ? requestedPage
+    : null;
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (isSubmitting || isGoogleLoading) return; // prevent double submit
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [showPassword, setShowPassword] = useState(false);
+const [errors, setErrors] = useState<FieldErrors>({});
+const [formError, setFormError] = useState("");
+const [formSuccess, setFormSuccess] = useState("");
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-    const nextErrors: FieldErrors = {};
+// Logged-in users should not see the sign-in form.
+useEffect(() => {
+  if (!isPending && session?.user) {
+    const userRole = (session.user as { role?: string }).role;
 
-    if (!email.trim()) {
-      nextErrors.email = ["Email is required."];
-    } else if (!isValidEmail(email.trim())) {
-      nextErrors.email = ["Please enter a valid email address."];
-    }
-
-    if (!password) {
-      nextErrors.password = ["Password is required."];
-    }
-
-    setErrors(nextErrors);
-    setFormError("");
-    setFormSuccess("");
-
-    if (Object.keys(nextErrors).length > 0) return;
-
-    setIsSubmitting(true);
-
-    // Better Auth checks the real credentials. We do not apply the sign-up
-    // password rules here because existing users may have older passwords.
-    authClient.signIn
-      .email({ email: email.trim(), password })
-      .then(async (result) => {
-        if (result.error) {
-          setFormError("Incorrect email or password. Please try again.");
-          return;
-        }
-
-        setFormSuccess("Signed in successfully. Redirecting...");
-
-        // Read the fresh session to find this user's role.
-        const freshSession = await authClient.getSession();
-        const userRole = (freshSession.data?.user as { role?: string } | undefined)
-          ?.role;
-
-        router.replace(safeRedirect ?? getDashboardPath(userRole));
-      })
-      .catch(() => {
-        setFormError("Could not sign in. Please try again.");
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+    router.replace(
+      safeRedirect ?? getDashboardPath(userRole)
+    );
   }
+}, [isPending, session, router, safeRedirect]);
+
+function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  if (isSubmitting || isGoogleLoading) return;
+
+  const nextErrors: FieldErrors = {};
+
+  if (!email.trim()) {
+    nextErrors.email = ["Email is required."];
+  } else if (!isValidEmail(email.trim())) {
+    nextErrors.email = ["Please enter a valid email address."];
+  }
+
+  if (!password) {
+    nextErrors.password = ["Password is required."];
+  }
+
+  setErrors(nextErrors);
+  setFormError("");
+  setFormSuccess("");
+
+  if (Object.keys(nextErrors).length > 0) return;
+
+  setIsSubmitting(true);
+
+  authClient.signIn
+    .email({ email: email.trim(), password })
+    .then(async (result) => {
+      if (result.error) {
+        setFormError("Incorrect email or password. Please try again.");
+        return;
+      }
+
+
+      // Get fresh session to find the user's role
+      const freshSession = await authClient.getSession();
+
+      const userRole = (
+        freshSession.data?.user as { role?: string } | undefined
+      )?.role;
+
+      // Private page থাকলে সেখানে যাবে, না হলে dashboard-এ যাবে
+      router.replace(
+        safeRedirect ?? getDashboardPath(userRole)
+      );
+    })
+    .catch(() => {
+      setFormError("Could not sign in. Please try again.");
+    })
+    .finally(() => {
+      setIsSubmitting(false);
+    });
+}
 
 
   if (isPending || session?.user) {
@@ -215,7 +228,7 @@ export default function SignInForm() {
           <Button
             type="submit"
             disabled={isSubmitting || isGoogleLoading}
-            className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:from-blue-700 hover:to-cyan-600"
+            className="h-12 w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:from-blue-700 hover:to-cyan-600"
           >
             {isSubmitting ? (
               <>

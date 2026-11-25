@@ -19,7 +19,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Service } from "@/components/home/service-types";
 import { getServiceById } from "@/lib/api/get-services";
-import { cn } from "@/lib/utils";
+import BookingForm from "./booking-form";
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -253,21 +253,8 @@ export default async function ServiceDetailsPage({ params }: Props) {
                                     </p>
                                 </div>
 
-                                {/* UI only - booking flow comes later */}
-                                <button
-                                    type="button"
-                                    className={buttonVariants({
-                                        className: cn(
-                                            "mt-6 h-12 w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:from-blue-700 hover:to-cyan-600"
-                                        ),
-                                    })}
-                                >
-                                    <Wrench className="size-4" />
-                                    Request Repair
-                                </button>
-                                <p className="mt-3 text-center text-xs text-slate-400">
-                                    Repair requests will open soon.
-                                </p>
+                                {/* Booking form + confirmation dialog */}
+                                <BookingForm service={service} />
                             </CardContent>
                         </Card>
                     </aside>

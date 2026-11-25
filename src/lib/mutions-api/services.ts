@@ -3,22 +3,22 @@ import { MyService } from "@/app/dashboard/technician/my-services/services";
 
 // Use the project's existing backend URL. NEXT_PUBLIC_BETTER_AUTH already points
 // to the Express server, so it is used as a fallback when the other variable is absent.
-const BASE_URL =process.env.NEXT_PUBLIC_BETTER_AUTH
+const BASE_URL = process.env.NEXT_PUBLIC_BETTER_AUTH
 
 export const createService = async (data: ServiceData) => {
-  const res = await fetch(`${BASE_URL}/services`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+    const res = await fetch(`${BASE_URL}/services`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
 
-  if (!res.ok) {
-    throw new Error("Could not save the service. Please try again.");
-  }
+    if (!res.ok) {
+        throw new Error("Could not save the service. Please try again.");
+    }
 
-  return res.json();
+    return res.json();
 };
 
 
@@ -70,6 +70,19 @@ export const updateService = async (
 export const deleteService = async (serviceId: string) => {
     const res = await fetch(`${BASE_URL}/services/${serviceId}`, {
         method: "DELETE",
+    });
+
+    return res.json();
+};
+
+// customer bookings 
+export const createBooking = async (bookingData: object) => {
+    const res = await fetch(`${BASE_URL}/bookings`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bookingData)
     });
 
     return res.json();
