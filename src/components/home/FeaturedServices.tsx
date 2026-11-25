@@ -35,7 +35,8 @@ export default async function FeaturedServices() {
 
   if (!apiUrl) {
     hasError = true;
-  } else {
+  } 
+  else {
     try {
       const response = await fetch(`${apiUrl}/services`, {
         cache: "no-store",

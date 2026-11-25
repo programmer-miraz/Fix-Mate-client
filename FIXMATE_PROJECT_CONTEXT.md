@@ -58,13 +58,15 @@ Actual TypeScript shape: `src/app/dashboard/technician/add-services/type.ts` (`S
 | Route | Method | Behaviour |
 |---|---|---|
 | `/` | GET | Plain text health check |
-| `/services` | GET | `services.find({}).toArray()` – returns a **plain array**, no filter/sort/limit |
+| `/services` | GET | Search/filter/sort via `search`, `category`, `mode`, `sort` query params; always adds `approvalStatus: "approved"`, `isAvailable: true`; `.sort({ createdAt: -1 })` by default, `basePrice` 1/-1 for `price-asc`/`price-desc`; returns a **plain array** |
+| `/services/:id` | GET | `findOne({ _id: ObjectId(id) })`; 404 when missing – used by the details page |
 | `/services` | POST | `services.insertOne(req.body)` |
 | `/my-services/:userId` | GET | `services.find({ technicianId: userId }).toArray()` – plain array |
-| `/services/:id/availability` | PATCH | `updateOne({ _id: ObjectId(id) }, { $set: { isAvailable } })` – used by the My Services toggle |
+| `/services/:id` | PATCH | `updateOne({ _id: ObjectId(id) }, { $set: req.body })` – edit and availability updates |
+| `/services/:id` | DELETE | `deleteOne({ _id: ObjectId(id) })` |
 | `/job` | POST | Stub response |
 
-Frontend filtering/sorting/limiting for Featured Services is done in `src/components/home/FeaturedServices.tsx` because the backend does not do it.
+The Home Featured Services component reuses `/services` (no query) and applies newest-6 limiting locally; the Browse and Details pages rely on the backend.
 
 ## 5. Auth setup
 
@@ -130,13 +132,16 @@ fixmate-server/
 - Hero: gradient heading, search UI, trust row, icon-based illustration.
 - Auth: sign-in/sign-up pages with client + server validation (password ≥6, uppercase, lowercase), role cards, inline error/success states, Better Auth integration.
 - Featured Services: real data from `/services`, approved + available only, newest 6 by `createdAt`, responsive cards, skeleton via Suspense, empty/error states.
+- Browse Services (`/services` in the `(main)` route group): Server Component reads `searchParams`, builds a query string with `URLSearchParams`, fetches through `customerServices(query)`; Express `/services` does the search/category/mode filtering, approved+available filter and price/newest sorting in MongoDB. `ServiceFilters.tsx` is the only client part (URL updates via `router.push`, Search button, Clear All). `loading.tsx` reuses `FeaturedServicesSkeleton`.
+- Service Details (`/services/[id]`): Server Component awaits `params.id`, validates a 24-char hex id, fetches via `getServiceById(id)` → `GET /services/:id`; calls `notFound()` for missing/unapproved/unavailable services. Two-column layout with image/description/technician card and a sticky price sidebar containing a UI-only Request Repair button. `loading.tsx` provides the skeleton. `(main)/layout.tsx` wraps `<Navbar />` in `Suspense` (required by `usePathname()` on dynamic routes under Cache Components).
 - Dashboard: role-based sidebar (unchanged menu items), minimal navbar with static session profile on the right, sign-out in the sidebar footer.
 - Technician Add Service: validated form, ImgBB upload with preview, `createService()` call, pending/available defaults, inline success/error messages.
 - Technician My Services: session id → `getMyServices(userID)`, responsive table (mobile: stacked rows) with Service / Category / Price / Review / Available / Actions columns, approval badges, working ON/OFF availability toggle via `updateServiceAvailability()` + Sonner toast, Edit dialog (pre-filled, ImgBB upload, `updateService()`), UI-only Delete button, loading/empty states, total count. `<Toaster />` is mounted in `src/app/layout.tsx`.
 
 ## 10. Pending / known gaps
 
-- `/services/[id]` detail pages, and Edit/Delete logic + API routes (buttons are UI-only by design).
+- Service Details page (`/services/[id]`) is built; the **Request Repair** button is UI-only until the booking flow is implemented.
+- Delete confirmation / actual delete UI on My Services is still pending (backend DELETE route exists).
 - Service approval workflow and admin page content; most dashboard pages are still placeholders.
 - Bookings and payments pages/APIs.
 - `/forgot-password` page (link exists but page not built).

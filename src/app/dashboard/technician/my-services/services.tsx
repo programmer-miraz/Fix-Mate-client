@@ -10,10 +10,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/lib/auth-client";
 import {
     getMyServices,
-    updateServiceAvailability,
+
 } from "@/lib/api/get-services";
 import { cn } from "@/lib/utils";
 import ActionButtons from "./edit-delete";
+import { updateServiceAvailability } from "@/lib/mutions-api/services";
 ;
 
 // Fields returned by the existing /my-services/:userId Express route.
@@ -120,37 +121,39 @@ function AvailabilityToggle({
 
 
 const Services = () => {
-    const { data: session } = useSession();
+    const { data: session, isPending } = useSession();
+
     const userId = session?.user?.id;
 
     const [services, setServices] = useState<MyService[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
-    // Reusable loader so the Retry button can call it again.
-    const loadServices = useCallback(async () => {
-        if (!userId) {
-            setServices([]);
-            setErrorMessage("Please sign in again to view your services.");
-            setIsLoading(false);
-            return;
-        }
+    const loadServices = async () => {
+        if (!userId) return;
+        setIsLoading(true);
 
         try {
             const result = await getMyServices(userId);
-            setServices(Array.isArray(result) ? (result as MyService[]) : []);
+
+            setServices(Array.isArray(result) ? result : []);
             setErrorMessage("");
         } catch {
             setErrorMessage("We could not load your services. Please try again.");
         } finally {
             setIsLoading(false);
         }
-    }, [userId]);
+    };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadServices();
-    }, [loadServices]);
+        if (isPending) return;
+
+        const timer = setTimeout(() => {
+            loadServices();
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, [isPending, userId]);
 
     return (
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -185,7 +188,7 @@ const Services = () => {
             </div>
 
             {/* Loading state */}
-            {isLoading && (
+            {(isPending || isLoading) && (
                 <div className="mt-8 overflow-hidden rounded-2xl border border-blue-100 bg-white p-5 shadow-lg shadow-blue-900/5">
                     <Skeleton className="h-5 w-32 bg-blue-100/70" />
                     <div className="mt-6 space-y-4">

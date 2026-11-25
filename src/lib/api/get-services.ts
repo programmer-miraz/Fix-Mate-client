@@ -9,44 +9,23 @@ export const getMyServices = async (userId: string) => {
 };
 
 
-// Technician: turn a service availability ON / OFF
-export const updateServiceAvailability = async (
-    serviceId: string,
-    isAvailable: boolean
-) => {
-    const res = await fetch(`${BASE_URL}/services/${serviceId}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ isAvailable }),
-    });
+/// customer get all services cart home services page
 
-    if (!res.ok) {
-        throw new Error("Could not update availability.");
-    }
-
+export const customerServices = async (query: string = "") => {
+    const res = await fetch(`${BASE_URL}/services?${query}`);
     return res.json();
 };
 
-/// Edit my-services
-export const updateService = async (
-    serviceId: string,
-    data: Partial<MyService>
-) => {
-    const res = await fetch(`${BASE_URL}/services/${serviceId}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            ...data,
-            approvalStatus: "pending",
-        }),
-    });
+// Public service details page: fetch one service by its MongoDB _id.
+export const getServiceById = async (serviceId: string) => {
+    const res = await fetch(`${BASE_URL}/services/${serviceId}`);
+
+    if (res.status === 404) {
+        return null; // page will show the Not Found page
+    }
 
     if (!res.ok) {
-        throw new Error("Could not update service.");
+        throw new Error("Could not load service details.");
     }
 
     return res.json();

@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import EditServiceDialog from "./edit-service-dialog";
 
 import type { MyService } from "./services";
+import { AlertDialogDestructive } from "./delete";
 
-type Props = {
+
+export type Props = {
     service: MyService;
     onServiceUpdated: () => void;
 };
@@ -36,14 +38,8 @@ const ActionButtons = ({ service, onServiceUpdated }: Props) => {
                     <Pencil className="size-3.5" />
                     Edit
                 </Button>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    className="h-8 cursor-pointer rounded-lg px-3 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-                >
-                    <Trash2 className="size-3.5" />
-                    Delete
-                </Button>
+              {/* Delete */}
+              <AlertDialogDestructive onServiceUpdated={onServiceUpdated}  service={service}/>
             </div>
 
             <EditServiceDialog

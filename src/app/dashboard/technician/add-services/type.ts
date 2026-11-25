@@ -1,6 +1,7 @@
 
 export type ServiceData = {
 
+    
     title: string;
     category:
     | "Smartphone"
@@ -17,8 +18,11 @@ export type ServiceData = {
     serviceMode: "Home Visit" | "Shop Drop-off";
     serviceArea: string;
     technicianId: string;
+    technicianName: string;
     technicianEmail: string;
     approvalStatus: "pending" | "approved" | "rejected";
     isAvailable: boolean;
     createdAt: Date;
+
+
 };

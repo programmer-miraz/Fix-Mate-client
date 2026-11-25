@@ -2,13 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Home, Store, UserRound, Wrench } from "lucide-react";
+import { ArrowRight, Home, MapPin, Store, UserRound, Wrench } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Service } from "@/components/home/service-types";
 
-export default function ServiceCard({ service }: { service: Service }) {
+export default function ServiceCard({
+  service,
+  showArea = false,
+}: {
+  service: Service;
+  showArea?: boolean;
+}) {
   const [imageFailed, setImageFailed] = useState(false);
 
   // Safe fallbacks in case a field is missing in the database.
@@ -57,6 +63,14 @@ export default function ServiceCard({ service }: { service: Service }) {
           )}
           {service.serviceMode || "Service"}
         </p>
+
+        {/* Service area (only on the Browse Services page) */}
+        {showArea && (
+          <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-slate-500">
+            <MapPin className="size-3.5 text-blue-500" />
+            {service.serviceArea || "Area not set"}
+          </p>
+        )}
 
         {/* Starting price */}
         <div className="mt-4 flex items-baseline gap-1.5">

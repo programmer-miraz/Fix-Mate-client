@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateService } from "@/lib/api/get-services";
+
 import { cn } from "@/lib/utils";
 
 import type { MyService } from "./services";
+import { updateService } from "@/lib/mutions-api/services";
 
 const fieldClass =
     "h-11 w-full rounded-xl border border-blue-100 bg-white px-3.5 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100";
@@ -184,8 +185,12 @@ export default function EditServiceDialog({
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+        <Dialog open={open}  onOpenChange={(newOpen) => {
+        if (!newOpen) return;
+        onOpenChange(newOpen);
+    }}
+ >
+            <DialogContent  >
                 <DialogHeader>
                     <DialogTitle>Edit service</DialogTitle>
                     <DialogDescription>
