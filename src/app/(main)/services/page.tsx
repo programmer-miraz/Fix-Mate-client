@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { AlertCircle, SearchX, Sparkles, Wrench } from "lucide-react";
 
-import FeaturedServicesSkeleton from "@/components/home/FeaturedServicesSkeleton";
 import ServiceCard from "@/components/home/ServiceCard";
 import type { Service } from "@/components/home/service-types";
 import { customerServices } from "@/lib/api/get-services";
 import ServiceFilters from "./ServiceFilters";
+import BrowseServicesSkeleton from "./loading";
 
 type Props = {
     searchParams: Promise<{
@@ -134,7 +134,7 @@ export default function servicesPage({ searchParams }: Props) {
                     </p>
                 </div>
 
-                <Suspense fallback={<FeaturedServicesSkeleton />}>
+                <Suspense fallback={<BrowseServicesSkeleton />}>
                     <Services searchParams={searchParams} />
                 </Suspense>
             </div>

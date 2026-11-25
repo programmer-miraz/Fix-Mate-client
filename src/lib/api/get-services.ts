@@ -10,7 +10,6 @@ export const getMyServices = async (userId: string) => {
 
 
 /// customer get all services cart home services page
-
 export const customerServices = async (query: string = "") => {
     const res = await fetch(`${BASE_URL}/services?${query}`);
     return res.json();
@@ -19,14 +18,5 @@ export const customerServices = async (query: string = "") => {
 // Public service details page: fetch one service by its MongoDB _id.
 export const getServiceById = async (serviceId: string) => {
     const res = await fetch(`${BASE_URL}/services/${serviceId}`);
-
-    if (res.status === 404) {
-        return null; // page will show the Not Found page
-    }
-
-    if (!res.ok) {
-        throw new Error("Could not load service details.");
-    }
-
     return res.json();
 };
