@@ -11,6 +11,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { authClient, useSession } from "@/lib/auth-client"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     Bookmark,
     Briefcase,
@@ -126,20 +127,32 @@ export function Deshboard_Sidebar() {
                     <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                         Menu
                     </p>
-                    <SidebarMenu>
-                        {menuItemByRole[role].map((item) => (
-                            <SidebarMenuItem key={item.id}>
-                                <SidebarMenuButton
-                                    render={<Link href={item.url} />}
-                                    isActive={pathname === item.url}
-                                    className="h-10 rounded-xl px-3 transition-all hover:shadow-sm data-[active=true]:font-semibold data-[active=true]:shadow-sm data-[active=true]:shadow-blue-500/10"
-                                >
-                                    <item.icon />
-                                    <span>{item.name}</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
+                    {isPending ? (
+                        // Menu items depend on the session role, so show a loader first.
+                        <div className="space-y-2 px-1" aria-label="Loading menu">
+                            {Array.from({ length: 5 }).map((_, index) => (
+                                <Skeleton
+                                    key={index}
+                                    className="h-10 w-full rounded-xl bg-blue-100/70"
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <SidebarMenu>
+                            {menuItemByRole[role].map((item) => (
+                                <SidebarMenuItem key={item.id}>
+                                    <SidebarMenuButton
+                                        render={<Link href={item.url} />}
+                                        isActive={pathname === item.url}
+                                        className="h-10 rounded-xl px-3 transition-all hover:shadow-sm data-[active=true]:font-semibold data-[active=true]:shadow-sm data-[active=true]:shadow-blue-500/10"
+                                    >
+                                        <item.icon />
+                                        <span>{item.name}</span>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    )}
                 </SidebarGroup>
             </SidebarContent>
 

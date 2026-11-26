@@ -87,3 +87,25 @@ export const createBooking = async (bookingData: object) => {
 
     return res.json();
 };
+
+
+// Technician: move a booking to the next status (and optionally set final amount)
+export const updateBookingStatus = async (
+    bookingId: string,
+    data: { status: string; finalAmount?: number }
+) => {
+    const res = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to update booking.");
+    }
+
+    return res.json();
+};
+

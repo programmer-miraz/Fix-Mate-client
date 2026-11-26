@@ -20,3 +20,18 @@ export const getServiceById = async (serviceId: string) => {
     const res = await fetch(`${BASE_URL}/services/${serviceId}`);
     return res.json();
 };
+
+// get requests
+export const getTechnicianBookings = async (email: string) => {
+    const res = await fetch(
+        `${BASE_URL}/bookings?technicianEmail=${email}`
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch bookings");
+    }
+
+    return res.json();
+};
+/// get customer my-booking=page
+

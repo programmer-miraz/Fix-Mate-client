@@ -64,6 +64,8 @@ Actual TypeScript shape: `src/app/dashboard/technician/add-services/type.ts` (`S
 | `/my-services/:userId` | GET | `services.find({ technicianId: userId }).toArray()` – plain array |
 | `/services/:id` | PATCH | `updateOne({ _id: ObjectId(id) }, { $set: req.body })` – edit and availability updates |
 | `/services/:id` | DELETE | `deleteOne({ _id: ObjectId(id) })` |
+| `/bookings` | GET | `find({ technicianEmail }).sort({ createdAt: -1 })` – plain array |
+| `/bookings/:id` | PATCH | `updateOne({ _id: ObjectId(id) }, { $set: req.body })` – technician status / final-amount updates |
 | `/job` | POST | Stub response |
 
 The Home Featured Services component reuses `/services` (no query) and applies newest-6 limiting locally; the Browse and Details pages rely on the backend.
@@ -137,6 +139,7 @@ fixmate-server/
 - Dashboard: role-based sidebar (unchanged menu items), minimal navbar with static session profile on the right, sign-out in the sidebar footer.
 - Technician Add Service: validated form, ImgBB upload with preview, `createService()` call, pending/available defaults, inline success/error messages.
 - Technician My Services: session id → `getMyServices(userID)`, responsive table (mobile: stacked rows) with Service / Category / Price / Review / Available / Actions columns, approval badges, working ON/OFF availability toggle via `updateServiceAvailability()` + Sonner toast, Edit dialog (pre-filled, ImgBB upload, `updateService()`), UI-only Delete button, loading/empty states, total count. `<Toaster />` is mounted in `src/app/layout.tsx`.
+- Technician Requests (`/dashboard/technician/requests`): Client Component fetches `getTechnicianBookings(session.user.email)`; status tabs with counts, booking cards, Accept/Reject/Start Work/Mark Completed actions through `updateBookingStatus()` → `PATCH /bookings/:id`; reject confirmation dialog and complete dialog with `finalAmount` defaulting to `basePrice`; toasts + list refresh after updates.
 
 ## 10. Pending / known gaps
 
