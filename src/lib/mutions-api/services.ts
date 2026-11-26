@@ -109,3 +109,20 @@ export const updateBookingStatus = async (
     return res.json();
 };
 
+//customer request cencel korte parbe 
+
+export const cancelBooking = async (bookingId: string, email: string) => {
+    const res = await fetch(`${BASE_URL}/bookings/${bookingId}/cancel`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to cancel booking");
+    }
+
+    return res.json();
+};

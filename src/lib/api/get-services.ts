@@ -33,5 +33,17 @@ export const getTechnicianBookings = async (email: string) => {
 
     return res.json();
 };
-/// get customer my-booking=page
 
+
+
+
+// get customer my-booking=page
+export const getCustomerBookings = async (email: string) => {
+    const res = await fetch(`${BASE_URL}/bookings/my?email=${email}`);
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch bookings");
+    }
+
+    return res.json();
+};
