@@ -26,6 +26,7 @@ import {
     Users,
     Wrench,
     Building2,
+    UserRound,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import Link from "next/link"
@@ -43,12 +44,10 @@ type MenuItem = {
 // Menu items for each role — the values must match the role saved at sign-up
 const menuItemByRole: Record<string, MenuItem[]> = {
     customer: [
-        { id: 1, name: "Deshboard", url: "/dashboard/customer", icon: LayoutDashboard },
-        { id: 2, name: "bookings", url: "/dashboard/customer/bookings", icon: Briefcase },
-        { id: 3, name: "payments", url: "/dashboard/customer/payments", icon: Bookmark },
-        // { id: 4, name: "My Applications", url: "/dashboard/customer/application", icon: FileText },
-        // { id: 5, name: "Billing", url: "/dashboard/customer/billing", icon: Receipt },
-        // { id: 6, name: "Settings", url: "/dashboard/customer/settings", icon: Settings },
+           { id: 1, name: "Dashboard", url: "/dashboard/customer", icon: LayoutDashboard },
+    { id: 2, name: "My Bookings", url: "/dashboard/customer/bookings", icon: ClipboardList },
+    { id: 3, name: "Payments", url: "/dashboard/customer/payments", icon: CreditCard },
+    { id: 4, name: "Update Profile", url: "/dashboard/profile", icon: UserRound },
     ],
     technician: [
         { id: 1, name: "Deshboard", url: "/dashboard/technician", icon: LayoutDashboard },
