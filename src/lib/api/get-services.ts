@@ -47,3 +47,9 @@ export const getCustomerBookings = async (email: string) => {
 
     return res.json();
 };
+
+// Get customer dashboard data
+export const getCustomerDashboard = async (email: string) => {
+    const res = await fetch(`${BASE_URL}/customer-dashboard/${email}`);
+    return res.json();
+};
