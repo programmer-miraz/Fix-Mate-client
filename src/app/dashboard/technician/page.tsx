@@ -1,11 +1,5 @@
-import React from 'react';
+import TechnicianDashboardContent from "./technician-dashboard-content";
 
-const Technicianpage = () => {
-    return (
-        <div>
-
-        </div>
-    );
-};
-
-export default Technicianpage;
+export default function Technicianpage() {
+    return <TechnicianDashboardContent />;
+}

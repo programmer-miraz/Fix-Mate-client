@@ -53,3 +53,12 @@ export const getCustomerDashboard = async (email: string) => {
     const res = await fetch(`${BASE_URL}/customer-dashboard/${email}`);
     return res.json();
 };
+
+//Get Technician dashboard page 
+export const getTechnicianDashboard = async (email: string) => {
+    const res = await fetch(
+        `${BASE_URL}/technician-dashboard/${encodeURIComponent(email)}`
+    );
+
+    return res.json();
+};
