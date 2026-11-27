@@ -12,11 +12,17 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getTechnicianDashboard } from "@/lib/api/get-services";
+import {
+    getTechnicianBookings,
+    getTechnicianDashboard,
+} from "@/lib/api/get-services";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import BookingStatusChart from "./booking-status-chart";
+
+import type { BookingStatusCounts } from "./booking-status-chart";
 
 // Exact fields returned by GET /technician-dashboard/:email.
 type TechnicianStats = {
@@ -25,7 +31,12 @@ type TechnicianStats = {
     totalBookings?: number;
     pendingBookings?: number;
     completedBookings?: number;
-    amount?: number;
+    totalEarnings?: number;
+};
+
+// Only the status field is needed from the existing bookings API.
+type TechnicianBooking = {
+    status?: string;
 };
 
 function safeNumber(value: number | undefined) {
@@ -38,20 +49,31 @@ export default function TechnicianDashboardContent() {
     const email = session?.user?.email;
 
     const [stats, setStats] = useState<TechnicianStats | null>(null);
+    const [bookings, setBookings] = useState<TechnicianBooking[] | null>(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     const loadDashboard = useCallback(async (userEmail: string) => {
         try {
-            const result = await getTechnicianDashboard(userEmail);
+            // Both calls already exist; no new API function is needed.
+            const [statsResult, bookingsResult] = await Promise.all([
+                getTechnicianDashboard(userEmail),
+                getTechnicianBookings(userEmail),
+            ]);
 
-            if (!result || typeof result !== "object" || result.message) {
+            if (!statsResult || typeof statsResult !== "object" || statsResult.message) {
                 throw new Error("Failed to load technician dashboard");
             }
 
-            setStats(result as TechnicianStats);
+            setStats(statsResult as TechnicianStats);
+            setBookings(
+                Array.isArray(bookingsResult)
+                    ? (bookingsResult as TechnicianBooking[])
+                    : []
+            );
             setErrorMessage("");
         } catch {
             setStats({});
+            setBookings([]);
             setErrorMessage("Could not load your dashboard. Please try again.");
         }
     }, []);
@@ -62,7 +84,29 @@ export default function TechnicianDashboardContent() {
         loadDashboard(email);
     }, [isPending, email, loadDashboard]);
 
-    const isLoading = isPending || stats === null;
+    // One loading UI covers session + both API calls.
+    const isLoading = isPending || stats === null || bookings === null;
+    const allBookings = bookings ?? [];
+
+    // Count real booking values with filter(). The chart and the list below
+    // both use this same object, so they can never disagree.
+    const statusCounts: BookingStatusCounts = {
+        pending: allBookings.filter((booking) =>
+            ["requested", "pending"].includes(booking.status || "")
+        ).length,
+        confirmed: allBookings.filter((booking) =>
+            ["accepted", "confirmed"].includes(booking.status || "")
+        ).length,
+        inProgress: allBookings.filter(
+            (booking) => booking.status === "in-progress"
+        ).length,
+        completed: allBookings.filter(
+            (booking) => booking.status === "completed"
+        ).length,
+        cancelled: allBookings.filter((booking) =>
+            ["cancelled", "rejected"].includes(booking.status || "")
+        ).length,
+    };
 
     const statCards = [
         {
@@ -100,13 +144,6 @@ export default function TechnicianDashboardContent() {
             icon: CheckCircle2,
             accent: "text-emerald-600 bg-emerald-50",
         },
-        {
-            title: "Total Earnings",
-            description: "Total amount received from paid bookings",
-            value: `$${safeNumber(stats?.amount).toFixed(2)}`,
-            icon: Wallet,
-            accent: "text-cyan-600 bg-cyan-50",
-        },
     ];
 
     return (
@@ -123,13 +160,16 @@ export default function TechnicianDashboardContent() {
 
             {/* Loading */}
             {isLoading && (
-                <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    {Array.from({ length: 6 }).map((_, index) => (
-                        <Skeleton
-                            key={index}
-                            className="h-32 rounded-2xl bg-blue-100/70"
-                        />
-                    ))}
+                <div className="mt-8 space-y-6">
+                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                        {Array.from({ length: 6 }).map((_, index) => (
+                            <Skeleton
+                                key={index}
+                                className="h-32 rounded-2xl bg-blue-100/70"
+                            />
+                        ))}
+                    </div>
+                    <Skeleton className="h-72 w-full rounded-2xl bg-blue-100/70" />
                 </div>
             )}
 
@@ -151,24 +191,24 @@ export default function TechnicianDashboardContent() {
                 </div>
             )}
 
-            {/* Statistics cards */}
             {!isLoading && !errorMessage && (
-                <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    {statCards.map((card) => {
-                        const Icon = card.icon;
+                <>
+                    {/* Statistics cards */}
+                    <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                        {statCards.map((card) => {
+                            const Icon = card.icon;
 
-                        return (
-                            <Card
-                                key={card.title}
-                                className="rounded-2xl border-blue-100 shadow-lg shadow-blue-900/5 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-900/10"
-                            >
-                                <CardContent className="p-5">
+                            return (
+                                <Card
+                                    key={card.title}
+                                    className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/5 transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/10"
+                                >
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="min-w-0">
-                                            <p className="text-xs font-medium text-slate-500">
+                                            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                                                 {card.title}
                                             </p>
-                                            <p className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
+                                            <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
                                                 {card.value}
                                             </p>
                                             <p className="mt-1 text-xs text-slate-400">
@@ -177,18 +217,43 @@ export default function TechnicianDashboardContent() {
                                         </div>
                                         <span
                                             className={cn(
-                                                "flex size-10 shrink-0 items-center justify-center rounded-xl",
+                                                "flex size-11 shrink-0 items-center justify-center rounded-xl",
                                                 card.accent
                                             )}
                                         >
                                             <Icon className="size-5" />
                                         </span>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
-                </div>
+                                </Card>
+                            );
+                        })}
+
+                        {/* Total Earnings - highlighted card */}
+                        <Card className="rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-600 via-blue-600 to-cyan-500 p-5 text-white shadow-lg shadow-blue-500/25 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/30">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="text-xs font-medium uppercase tracking-wide text-blue-100">
+                                        Total Earnings
+                                    </p>
+                                    <p className="mt-3 text-4xl font-bold tracking-tight">
+                                        ${safeNumber(stats?.totalEarnings).toFixed(2)}
+                                    </p>
+                                    <p className="mt-1 text-xs text-blue-100/80">
+                                        Total amount received from paid bookings
+                                    </p>
+                                </div>
+                                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                                    <Wallet className="size-5" />
+                                </span>
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Booking status chart */}
+                    <div className="mt-8">
+                        <BookingStatusChart counts={statusCounts} />
+                    </div>
+                </>
             )}
         </div>
     );
