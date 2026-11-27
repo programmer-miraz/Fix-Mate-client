@@ -68,6 +68,7 @@ Actual TypeScript shape: `src/app/dashboard/technician/add-services/type.ts` (`S
 | `/bookings/:id` | PATCH | `updateOne({ _id: ObjectId(id) }, { $set: req.body })` – technician status / final-amount updates |
 | `/bookings/my` | GET | `find({ customerEmail: email })` – customer's own bookings |
 | `/bookings/:id/cancel` | PATCH | Customer cancels only when `status: "requested"` and email matches |
+| `/payments/:email` | GET | `find({ customerEmail: email }).sort({ paidAt: -1 })` → `{ success: true, payments: [...] }` |
 | `/job` | POST | Stub response |
 
 The Home Featured Services component reuses `/services` (no query) and applies newest-6 limiting locally; the Browse and Details pages rely on the backend.
@@ -143,6 +144,7 @@ fixmate-server/
 - Technician My Services: session id → `getMyServices(userID)`, responsive table (mobile: stacked rows) with Service / Category / Price / Review / Available / Actions columns, approval badges, working ON/OFF availability toggle via `updateServiceAvailability()` + Sonner toast, Edit dialog (pre-filled, ImgBB upload, `updateService()`), UI-only Delete button, loading/empty states, total count. `<Toaster />` is mounted in `src/app/layout.tsx`.
 - Technician Requests (`/dashboard/technician/requests`): Client Component fetches `getTechnicianBookings(session.user.email)`; status tabs with counts, booking cards, Accept/Reject/Start Work/Mark Completed actions through `updateBookingStatus()` → `PATCH /bookings/:id`; reject confirmation dialog and complete dialog with `finalAmount` defaulting to `basePrice`; toasts + list refresh after updates.
 - Customer My Bookings (`/dashboard/customer/bookings`): `page.tsx` renders `bookings-content.tsx` (Client Component) with `booking-card.tsx`; fetches `getCustomerBookings(session.user.email)` → `GET /bookings/my?email=...`; tabs All/Active/To pay/Paid/Closed filter client-side with counts; Cancel request only for `status: "requested"` via `cancelBooking(id, email)` → `PATCH /bookings/:id/cancel` with confirmation dialog, toasts and list refresh; Pay Now button for completed+unpaid is UI-only (no Stripe integration exists yet).
+- Customer Payment History (`/dashboard/customer/payments`): Client Component fetches `getCustomerPayments(session.user.email)` → `GET /payments/:email` (wrapped `{ success, payments }`); summary cards (count, paid total, latest date), responsive table + mobile rows, green Paid badge, skeleton/empty/error states. Stripe checkout helpers live in `src/lib/paymentApi.ts/payment.ts` and `/dashboard/payment/success`.
 
 ## 10. Pending / known gaps
 

@@ -26,3 +26,9 @@ export const handlePayment = async (bookingId: string) => {
         console.error("Payment Error:", error);
     }
 };
+
+// Get customer payment history
+export const getCustomerPayments = async (email: string) => {
+    const res = await fetch(`${BASE_URL}/payments/${email}`);
+    return res.json();
+};
