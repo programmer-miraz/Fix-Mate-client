@@ -47,8 +47,13 @@ function matchesFilter(booking: CustomerBooking, key: string) {
         return booking.status === "rejected" || booking.status === "cancelled";
     return true;
 }
+type Props = {
 
-export default function BookingsContent() {
+    searchParams: {
+        canceled?: string;
+    };
+};
+export default function BookingsContent({searchParams}:Props) {
     const { data: session, isPending } = useSession();
     const email = session?.user?.email;
 
@@ -132,8 +137,7 @@ export default function BookingsContent() {
                 <div className="flex flex-wrap gap-1 rounded-xl border border-blue-100 bg-white p-1 shadow-sm">
                     {filterTabs.map((tab) => {
                         const count = allBookings.filter((booking) =>
-                            matchesFilter(booking, tab.key)
-                        ).length;
+                            matchesFilter(booking, tab.key)).length;
 
                         return (
                             <button
@@ -157,11 +161,39 @@ export default function BookingsContent() {
             {/* Loading */}
             {isLoading && (
                 <div className="mt-8 space-y-4">
-                    {Array.from({ length: 3 }).map((_, index) => (
+                    {Array.from({ length:bookings?.length || 3}).map((_, index) => (
                         <div
                             key={index}
-                            className="h-40 animate-pulse rounded-2xl border border-blue-100 bg-white shadow-lg shadow-blue-900/5"
-                        />
+                            className="flex animate-pulse flex-col gap-5 rounded-2xl border border-blue-100 bg-white p-5 shadow-lg shadow-blue-900/5 md:flex-row"
+                        >
+                            {/* Service Image */}
+                            <div className="h-24 w-24 shrink-0 rounded-xl bg-gray-200" />
+
+                            {/* Booking Information */}
+                            <div className="flex-1 space-y-4">
+                                <div className="h-5 w-2/3 rounded bg-gray-200" />
+                                <div className="h-4 w-1/3 rounded bg-gray-200" />
+
+                                <div className="flex flex-wrap gap-3">
+                                    <div className="h-4 w-28 rounded bg-gray-200" />
+                                    <div className="h-4 w-32 rounded bg-gray-200" />
+                                </div>
+
+                                <div className="h-4 w-1/2 rounded bg-gray-200" />
+                            </div>
+
+                            {/* Status and Price */}
+                            <div className="flex flex-col justify-between gap-4 border-t border-gray-100 pt-4 md:w-48 md:border-l md:border-t-0 md:pl-5 md:pt-0">
+                                <div className="flex gap-2">
+                                    <div className="h-6 w-20 rounded-full bg-gray-200" />
+                                    <div className="h-6 w-16 rounded-full bg-gray-200" />
+                                </div>
+
+                                <div className="h-7 w-20 rounded bg-gray-200" />
+
+                                <div className="h-10 w-full rounded-lg bg-gray-200" />
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -225,6 +257,7 @@ export default function BookingsContent() {
                 <div className="mt-6 space-y-4">
                     {visibleBookings.map((booking) => (
                         <BookingCard
+                            searchParams={searchParams}
                             key={booking._id}
                             booking={booking}
                             onCancel={() => setCancelTarget(booking)}

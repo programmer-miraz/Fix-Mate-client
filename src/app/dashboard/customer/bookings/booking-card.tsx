@@ -4,6 +4,7 @@ import { CalendarDays, Mail, MapPin, UserRound, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { handlePayment } from "@/lib/paymentApi.ts/payment";
 
 // Fields actually stored in the bookings collection by the customer booking form.
 export type CustomerBooking = {
@@ -91,12 +92,21 @@ type Props = {
     booking: CustomerBooking;
     onCancel: () => void;
     isCancelling: boolean;
+    searchParams: {
+        canceled?: string;
+    };
 };
 
-export default function BookingCard({ booking, onCancel, isCancelling }: Props) {
+export default function BookingCard({ searchParams, booking, onCancel, isCancelling }: Props) {
     const canCancel = booking.status === "requested";
     const canPay =
         booking.status === "completed" && booking.paymentStatus !== "paid";
+    const canceled = searchParams.canceled
+    if (canceled) {
+        console.log(
+            'Order canceled -- continue to shop around and check out when you\'re ready.'
+        )
+    }
 
     return (
         <div className="flex flex-col overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-lg shadow-blue-900/5 transition hover:shadow-xl hover:shadow-blue-900/10 md:flex-row">
@@ -191,12 +201,15 @@ export default function BookingCard({ booking, onCancel, isCancelling }: Props) 
 
                     {/* Payment UI is ready for the existing Stripe integration. */}
                     {canPay && (
-                        <Button
-                            type="button"
-                            className="h-10 w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition hover:from-blue-700 hover:to-cyan-600"
-                        >
-                            Pay Now
-                        </Button>
+                        <section>
+                            <Button
+                                type="button"
+                                onClick={() => handlePayment(booking._id)}
+                                className="h-10 w-full cursor-pointer rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition hover:from-blue-700 hover:to-cyan-600"
+                            >
+                                Pay Now
+                            </Button>
+                        </section>
                     )}
                 </div>
             </div>

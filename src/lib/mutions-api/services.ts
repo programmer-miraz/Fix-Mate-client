@@ -110,7 +110,6 @@ export const updateBookingStatus = async (
 };
 
 //customer request cencel korte parbe 
-
 export const cancelBooking = async (bookingId: string, email: string) => {
     const res = await fetch(`${BASE_URL}/bookings/${bookingId}/cancel`, {
         method: "PATCH",
