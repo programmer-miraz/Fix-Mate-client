@@ -1,11 +1,5 @@
-import React from 'react';
+import AllBookingsContent from "./all-bookings-content";
 
-const BookingPage = () => {
-    return (
-        <div>
-            admin booking page
-        </div>
-    );
-};
-
-export default BookingPage;
+export default function BookingPage() {
+    return <AllBookingsContent />;
+}

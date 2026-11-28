@@ -75,6 +75,7 @@ Actual TypeScript shape: `src/app/dashboard/technician/add-services/type.ts` (`S
 | `/admin/users/:id/role` | PATCH | Admin-only role change; rejects self-change; returns `{ success: true }` |
 | `/admin/services` | GET | All services (plain array, sorted by `createdAt` desc) |
 | `/admin/services/:id/status` | PATCH | Admin approves/rejects a service (`approvalStatus`) |
+| `/admin/bookings` | GET | All bookings (plain array, sorted by `createdAt` desc) – read-only admin page |
 | `/job` | POST | Stub response |
 
 The Home Featured Services component reuses `/services` (no query) and applies newest-6 limiting locally; the Browse and Details pages rely on the backend.
@@ -155,6 +156,7 @@ fixmate-server/
 - Technician Dashboard (`/dashboard/technician`): `page.tsx` renders the separate Client Component `technician-dashboard-content.tsx`; fetches `getTechnicianDashboard(email)` (flat `{ totalServices, approvedServices, totalBookings, pendingBookings, completedBookings, totalEarnings }`) and `getTechnicianBookings(email)` in one `Promise.all`; six refined stat cards (Total Earnings highlighted with blue→cyan gradient) plus a separate `booking-status-chart.tsx` Client Component showing a shadcn/Recharts donut and matching status list. Counts come from `filter()` on real bookings: pending=requested/pending, confirmed=accepted/confirmed, in-progress, completed, cancelled=rejected/cancelled. `src/components/ui/chart.tsx` was added via `npx shadcn add chart` (adds `recharts`); `card.tsx` was restored afterwards.
 - Admin Manage Users: shared Client Component `src/app/dashboard/admin/users/admin-users-content.tsx` rendered by both `/dashboard/admin` and `/dashboard/admin/users`; `getAllUsers()` → `GET /admin/users` (plain array); role tabs with live counts; role change via `updateUserRole(id, role, adminEmail)` → `PATCH /admin/users/:id/role` after a confirmation dialog; toast + refetch. Self-role change is disabled in UI (You badge) and blocked by backend; other admins remain editable. Mobile uses stacked cards instead of the table.
 - Admin Service Approval (`/dashboard/admin/services`): `page.tsx` is a Server Component rendering `service-approval-content.tsx`; `getAllServices()` → `GET /admin/services` (plain array); Pending/Approved/Rejected/All tabs with live counts and client-side filtering; shadcn `Table` (added via `npx shadcn add table`) with horizontally scrollable wrapper; Approve/Reject buttons per current status, confirmation dialog, `updateServiceStatus(id, status)` → `PATCH /admin/services/:id/status`, toast + refetch.
+- Admin All Bookings (`/dashboard/admin/bookings`): `page.tsx` is a Server Component rendering `all-bookings-content.tsx`; `getAllBookings()` → `GET /admin/bookings` (plain array); strictly read-only shadcn table with Ticket (derived from `_id` tail), Service, Customer, Technician, Date (`preferredDate`), Status, Payment and Amount (`finalAmount` when completed, else `basePrice`); status tabs All/Requested/Accepted/In progress/Completed/Rejected/Cancelled with live client-side counts and filtering. "pending" status is grouped under Requested.
 
 ## 10. Pending / known gaps
 

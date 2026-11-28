@@ -306,7 +306,7 @@ export default function ServiceApprovalContent() {
                                                     {status !== "approved" && (
                                                         <Button
                                                             type="button"
-                                                            disabled={Boolean(updatingId)}
+                                                            disabled={updatingId === service._id}
                                                             onClick={() =>
                                                                 setPendingAction({
                                                                     service,
@@ -323,7 +323,7 @@ export default function ServiceApprovalContent() {
                                                         <Button
                                                             type="button"
                                                             variant="outline"
-                                                            disabled={Boolean(updatingId)}
+                                                            disabled={updatingId === service._id}
                                                             onClick={() =>
                                                                 setPendingAction({
                                                                     service,

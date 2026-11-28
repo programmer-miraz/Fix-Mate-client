@@ -74,3 +74,9 @@ export const getAllServices = async () => {
     const res = await fetch(`${BASE_URL}/admin/services`);
     return res.json();
 };
+
+//Admin -get booking-page
+export const getAllBookings = async () => {
+    const res = await fetch(`${BASE_URL}/admin/bookings`);
+    return res.json();
+};
