@@ -1,12 +1,5 @@
-import React from 'react';
+import ServiceApprovalContent from "./service-approval-content";
 
-const ServicesPage = () => {
-    return (
-        <div>
-            admin services page
-            
-        </div>
-    );
-};
-
-export default ServicesPage;
+export default function ServicesPage() {
+    return <ServiceApprovalContent />;
+}

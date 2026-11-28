@@ -125,3 +125,36 @@ export const cancelBooking = async (bookingId: string, email: string) => {
 
     return res.json();
 };
+
+// admin role change user-page
+export const updateUserRole = async (
+    id: string,
+    role: string,
+    adminEmail: string
+) => {
+    const res = await fetch(`${BASE_URL}/admin/users/${id}/role`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role, adminEmail }),
+    });
+
+    return res.json();
+};
+
+// Admin - Update service approval status
+export const updateServiceStatus = async (
+    id: string,
+    approvalStatus: string
+) => {
+    const res = await fetch(`${BASE_URL}/admin/services/${id}/status`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ approvalStatus }),
+    });
+
+    return res.json();
+};

@@ -137,6 +137,7 @@ export default function Navbar() {
               user={session.user}
               onSignOut={handleSignOut}
               isSigningOut={isSigningOut}
+
             />
           )}
 
@@ -145,7 +146,7 @@ export default function Navbar() {
             type="button"
             variant="ghost"
             size="icon"
-            className="size-9 text-slate-700 md:hidden"
+            className="size-9 text-slate-700 cursor-pointer md:hidden"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"

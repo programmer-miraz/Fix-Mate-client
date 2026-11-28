@@ -67,21 +67,21 @@ function AccountMenu({user,onSignOut,isSigningOut}: {user: AccountUser;onSignOut
   const roleLabel = getRoleLabel(user.role);
 
   return (
-    <div className="relative cursor-pointer" ref={menuRef}>
+    <div className="relative" ref={menuRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-label="Open account menu"
-        className="flex items-center gap-1.5 rounded-full border border-blue-100 bg-white py-0.5 pl-0.5 pr-1.5 shadow-sm transition hover:border-blue-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+        className="flex items-center cursor-pointer gap-1.5 rounded-full border border-blue-100 bg-white py-0.5 pl-0.5 pr-1.5 shadow-sm transition hover:border-blue-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
       >
         {user.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={user.image}
             alt={user.name ?? "Profile image"}
-            className="size-8 rounded-full object-cover"
+            className="size-8  rounded-full object-cover"
           />
         ) : (
           <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 text-xs font-semibold text-white">

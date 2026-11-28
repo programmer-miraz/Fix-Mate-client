@@ -1,11 +1,5 @@
-import React from 'react';
+import AdminUsersContent from "./admin-users-content";
 
-const UsersPage = () => {
-    return (
-        <div>
-            admin users page
-        </div>
-    );
-};
-
-export default UsersPage;
+export default function UsersPage() {
+    return <AdminUsersContent />;
+}

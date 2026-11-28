@@ -62,3 +62,15 @@ export const getTechnicianDashboard = async (email: string) => {
 
     return res.json();
 };
+
+// Get admin users-page role api
+export const getAllUsers = async () => {
+    const res = await fetch(`${BASE_URL}/admin/users`);
+    return res.json();
+};
+
+// Admin - Get all services-page
+export const getAllServices = async () => {
+    const res = await fetch(`${BASE_URL}/admin/services`);
+    return res.json();
+};

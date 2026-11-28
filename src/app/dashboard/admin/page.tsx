@@ -1,11 +1,9 @@
-import React from 'react';
+import AdminUsersContent from "./users/admin-users-content";
 
-const AdminPage = () => {
+export default function AdminPage() {
     return (
         <div>
-            admin page
+            admin dash board page 
         </div>
-    );
-};
-
-export default AdminPage;
+    )
+}
