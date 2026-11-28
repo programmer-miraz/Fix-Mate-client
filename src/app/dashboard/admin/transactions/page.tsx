@@ -1,11 +1,5 @@
-import React from 'react';
+import TransactionsContent from "./transactions-content";
 
-const page = () => {
-    return (
-        <div>
-            transactions page admin
-        </div>
-    );
-};
-
-export default page;
+export default function page() {
+    return <TransactionsContent />;
+}

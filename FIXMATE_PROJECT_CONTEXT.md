@@ -76,6 +76,7 @@ Actual TypeScript shape: `src/app/dashboard/technician/add-services/type.ts` (`S
 | `/admin/services` | GET | All services (plain array, sorted by `createdAt` desc) |
 | `/admin/services/:id/status` | PATCH | Admin approves/rejects a service (`approvalStatus`) |
 | `/admin/bookings` | GET | All bookings (plain array, sorted by `createdAt` desc) – read-only admin page |
+| `/admin/transactions` | GET | All payment records (plain array, sorted by `createdAt` desc) – read-only admin page |
 | `/job` | POST | Stub response |
 
 The Home Featured Services component reuses `/services` (no query) and applies newest-6 limiting locally; the Browse and Details pages rely on the backend.

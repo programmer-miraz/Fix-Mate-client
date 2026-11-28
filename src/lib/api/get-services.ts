@@ -80,3 +80,9 @@ export const getAllBookings = async () => {
     const res = await fetch(`${BASE_URL}/admin/bookings`);
     return res.json();
 };
+
+// Admin - Get all transactions-page
+export const getAllTransactions = async () => {
+    const res = await fetch(`${BASE_URL}/admin/transactions`);
+    return res.json();
+};
