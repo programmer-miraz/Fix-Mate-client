@@ -86,3 +86,9 @@ export const getAllTransactions = async () => {
     const res = await fetch(`${BASE_URL}/admin/transactions`);
     return res.json();
 };
+
+// Admin Dashboard
+export const getAdminDashboard = async () => {
+    const res = await fetch(`${BASE_URL}/admin-dashboard`);
+    return res.json();
+};
